@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextField, Button, Typography } from "@mui/material";
 import { useNavigate } from "@remix-run/react";
 
@@ -6,6 +6,13 @@ export default function Login() {
   const [username, setUsername] = useState("ipgautomotive");
   const [password, setPassword] = useState("carmaker");
   const [error, setError] = useState("");
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("user");
+    if (storedUsername) {
+      // Redirect to the login page if there's no user in localStorage
+      navigate("/");
+    }
+  }, []);
 
   const navigate = useNavigate();
 
