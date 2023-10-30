@@ -1,20 +1,29 @@
 import { useEffect, useState } from "react";
-import { TextField, Button, Typography } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+  Container,
+  Box,
+} from "@mui/material";
 import { useNavigate } from "@remix-run/react";
 
 export default function Login() {
   const [username, setUsername] = useState("ipgautomotive");
   const [password, setPassword] = useState("carmaker");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const storedUsername = localStorage.getItem("user");
     if (storedUsername) {
-      // Redirect to the login page if there's no user in localStorage
+      // Redirect to the home page if there's a user in localStorage
       navigate("/");
     }
   }, []);
-
-  const navigate = useNavigate();
 
   function handleLogin() {
     if (username === "ipgautomotive" && password === "carmaker") {
@@ -26,21 +35,46 @@ export default function Login() {
   }
 
   return (
-    <div>
-      <Typography variant="h4">Login</Typography>
-      <TextField
-        label="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <TextField
-        type="password"
-        label="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button onClick={handleLogin}>Login</Button>
-      {error && <Typography color="error">{error}</Typography>}
-    </div>
+    <Container
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
+      <Card>
+        <CardContent>
+          <Typography variant="h4" gutterBottom>
+            Login
+          </Typography>
+          <TextField
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            type="password"
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <Box mt={2}>
+            <Button variant="contained" color="primary" onClick={handleLogin}>
+              Login
+            </Button>
+          </Box>
+          {error && (
+            <Typography color="error" mt={2}>
+              {error}
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
