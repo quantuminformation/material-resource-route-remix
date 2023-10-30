@@ -3,29 +3,25 @@ import { useQuery } from "react-query";
 import { Card, CardContent, Typography, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 
-const apiKey = process.env.WEATHER_API_KEY;
-
-const fetchWeatherData = async (city: string) => {
-  const response = await fetch(
-    `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`
-  );
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.json();
-};
-
 interface WeatherCardProps {
   cityName: string;
   removeCity: (city: string) => void;
 }
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ cityName, removeCity }) => {
+  const fetchWeatherData = async () => {
+    const response = await fetch(`/weather?city=${cityName}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  };
+
   const {
     data: weatherData,
     error,
     isLoading,
-  } = useQuery(["weatherData", cityName], () => fetchWeatherData(cityName));
+  } = useQuery(["weatherData", cityName], fetchWeatherData);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error fetching data for {cityName}</p>;

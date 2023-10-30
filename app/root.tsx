@@ -11,7 +11,6 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <h1>Hello world!</h1>
         <QueryClientProvider client={queryClient}>
           <Outlet />
         </QueryClientProvider>

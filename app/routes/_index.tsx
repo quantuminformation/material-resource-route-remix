@@ -1,9 +1,19 @@
 import { Button, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { useNavigate } from "@remix-run/react";
+import React, { useEffect, useState } from "react";
 import WeatherCard from "~/components/WeatherCard";
 
 const HomePage: React.FC = () => {
-  const [cityInput, setCityInput] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("user");
+    if (!storedUsername) {
+      // Redirect to the login page if there's no user in localStorage
+      navigate("/login");
+    }
+  }, []);
+  const [cityInput, setCityInput] = useState("london");
   const [cities, setCities] = useState<string[]>([]);
 
   const addCity = () => {
