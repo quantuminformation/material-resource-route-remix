@@ -1,86 +1,45 @@
-import { useState, useEffect } from "react";
-import {
-  Button,
-  TextField,
-  Typography,
-  Card,
-  CardContent,
-  IconButton,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Button, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
+import WeatherCard from "~/components/WeatherCard";
 
-function HomePage() {
-  const [cities, setCities] = useState([]);
-  const [city, setCity] = useState("");
-  const [weatherData, setWeatherData] = useState({});
-
-  const apiKey = "ca2346b0fbb54bec834155506232810"; // Your API key
-
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    // This will run only on the client side after the initial render
-    const storedUsername = localStorage.getItem("user");
-    setUsername(storedUsername); // Move this line outside of useEffect
-    // Fetch weather data for cities
-    cities.forEach((city) => {
-      fetch(`http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setWeatherData((prev) => ({ ...prev, [city]: data }));
-        });
-    });
-  }, [cities]);
+const HomePage: React.FC = () => {
+  const [cityInput, setCityInput] = useState("");
+  const [cities, setCities] = useState<string[]>([]);
 
   const addCity = () => {
-    if (cities.length < 5) {
-      setCities([...cities, city]);
-      setCity("");
+    if (cityInput && !cities.includes(cityInput)) {
+      setCities((prevCities) => [...prevCities, cityInput]);
+      setCityInput("");
     } else {
-      alert("You can add a maximum of 5 cities.");
+      alert("City is either empty or already added");
     }
   };
 
-  const removeCity = (cityToRemove) => {
-    setCities(cities.filter((city) => city !== cityToRemove));
+  const removeCity = (cityToRemove: string) => {
+    setCities((prevCities) =>
+      prevCities.filter((city) => city !== cityToRemove)
+    );
   };
 
   return (
     <div>
-      <Typography variant="h4">
-        Welcome to the weather app {username}
-      </Typography>
-
+      <Typography variant="h4">Add a City</Typography>
       <TextField
         label="City"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
+        value={cityInput}
+        onChange={(e) => setCityInput(e.target.value)}
       />
       <Button onClick={addCity}>Add City</Button>
 
       {cities.map((cityName) => (
-        <Card key={cityName}>
-          <CardContent>
-            <Typography variant="h5">{cityName}</Typography>
-            {weatherData[cityName] && (
-              <>
-                <Typography>
-                  {weatherData[cityName].current.condition.text}
-                </Typography>
-                <img
-                  src={weatherData[cityName].current.condition.icon}
-                  alt="weather icon"
-                />
-              </>
-            )}
-            <IconButton onClick={() => removeCity(cityName)}>
-              <DeleteIcon />
-            </IconButton>
-          </CardContent>
-        </Card>
+        <WeatherCard
+          key={cityName}
+          cityName={cityName}
+          removeCity={removeCity}
+        />
       ))}
     </div>
   );
-}
+};
 
 export default HomePage;
